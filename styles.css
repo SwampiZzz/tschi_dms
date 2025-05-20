@@ -5,6 +5,12 @@ header {
 .sign-up-btn {
     background-color: #E3F09B;
     color:#1F0318;
+    border: 2px solid transparent;
+}
+.sign-up-btn:hover {
+    background-color: #1F0318;
+    color: white;
+    border: 2px solid #E3F09B;
 }
 
 .navbar {

@@ -14,6 +14,8 @@
       session_start();
       include('nav.php');
       nav();
+      include('login.php');
+      include('sign-up.php');
     ?>
   </header>
   <body>
