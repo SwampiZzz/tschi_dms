@@ -6,11 +6,10 @@
     <!-- Main Navbar -->
     <nav class="navbar shadow-sm" style="background-color: #1F0318;">
         <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand text-white" href="?nav=home">
+            <a class="navbar-brand text-white" href="?nav">
                 <img src="elems/logo.png" alt="TSCHI" width="40" height="40">
                 <span class="ms-2 fw-bold">TSCHI - DMS</span>
             </a>
-
             <div>
                 <?php 
                     if (!isset($_SESSION['user_id'])): 
@@ -30,10 +29,10 @@
                                 $profile_data = mysqli_fetch_assoc($profile_sql);
 
                                 $first_name = $profile_data['first_name'] ?? 'User';
-                                $profile_pic_path = "images/{$login_id}.png";
+                                $profile_pic_path = "elems/profile-picture/{$login_id}.png";
 
                                 if (!file_exists($profile_pic_path)) {
-                                    $profile_pic_path = "images/default.png";
+                                    $profile_pic_path = "elems/profile-picture/default.png";
                                 }
                             ?>
                             <img src="<?= $profile_pic_path ?>" alt="Profile" class="rounded-circle me-2" width="32" height="32">
@@ -43,7 +42,7 @@
                             </button>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                                 <li><a class="dropdown-item" href="?nav=profile">Profile Settings</a></li>
-                                <li><a class="dropdown-item text-danger" href="logout.php">Logout</a></li>
+                                <li><a class="dropdown-item text-danger" href="?nav=logout">Logout</a></li>
                             </ul>
                         </div>
                 <?php 
@@ -61,29 +60,31 @@
         <div class="container">
             <ul class="navbar-nav small fw-bold">
                 <?php 
-                    if ($_SESSION['role'] === 'admin'): 
+                    if ($_SESSION['role'] == 1) { 
                 ?>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=admin-dashboard">Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=manage-users">Manage Users</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=manage-categories">Manage Categories</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=all-files">All Files</a></li>
                 <?php 
-                    elseif ($_SESSION['role'] === 'moderator'): 
+                    } elseif ($_SESSION['role'] == 2) {
                 ?>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=my-files">My Files</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=upload">Upload New File</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=file-status">File Status</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=review-uploads">Review Uploads</a></li>
                 <?php 
-                    elseif ($_SESSION['role'] === 'user'): 
+                    } else{
                 ?>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=my-files">My Files</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=upload">Upload New File</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=file-status">File Status</a></li>
                 <?php 
-                    endif; 
+                    } endif; 
                 ?>
             </ul>
         </div>
     </nav>
-    <?php 
-        endif;
+    <?php
     }
-?>
+    ?>

@@ -14,31 +14,45 @@
       session_start();
       include('nav.php');
       nav();
-    ?>
-
-    <section class="hero-section d-flex align-items-center justify-content-center">
-      <div class="text-center">
-        <h1 class="fw-bold display-5">Tanauan School of Craftsmanship and Home Industries<br>Document Management System</h1>
-        <p class="lead">Effortlessly Store, Manage, and Retrieve School Documents.</p>
-        <div class="mt-3">
-          <a class="btn login-btn btn-outline-light fw-bold me-2" data-bs-toggle="modal" data-bs-target="#login-pop-up">Login now</a>
-          <a class="btn sign-up-btn fw-bold" data-bs-toggle="modal" data-bs-target="#sign-up-pop-up">Sign up now</a>
-        </div>
-      </div>
-    </section>
-    <?php
-      include('login.php');
-      include('sign-up.php');
-    ?>
+      switch ($_REQUEST['nav']) {
+        case 'home':
+          include('home.php');
+          break;
+        case 'profile':
+          include('profile.php');
+          break;
+        case 'logout':
+          include('logout.php');
+          break;
+        case 'admin-dashboard':
+          include('admin-dashboard.php');
+          break;
+        case 'manage-users':
+          include('manage-users.php');
+          break;
+        case 'manage-categories':
+          include('manage-users.php');
+          break;
+        case 'all-files':
+          include('all-files.php');
+          break;
+        case 'my-files':
+          include("my-files.php");
+          break;
+        case 'upload':
+          include("upload.php");
+          break;
+        case 'file-status':
+          include("file-status.php");
+          break;
+        case 'review-uploads':
+          include("review-uploads.php");
+          break;
+        default:
+          include('home.php');
+          break;
+      }
+	  ?>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/js/bootstrap.bundle.min.js" integrity="sha384-j1CDi7MgGQ12Z7Qab0qlWQ/Qqz24Gc6BM0thvEMVjHnfYGF0rmFCozFSxQBxwHKO" crossorigin="anonymous"></script>
-    <?php if (isset($_SESSION['login_error'])): ?>
-      <script>
-        document.addEventListener('DOMContentLoaded', function () {
-          const loginModal = new bootstrap.Modal(document.getElementById('login-pop-up'));
-          loginModal.show();
-        });
-      </script>
-    <?php unset($_SESSION['login_error']); ?>
-    <?php endif; ?>
   </body>
 </html>

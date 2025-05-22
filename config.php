@@ -22,12 +22,14 @@
                 $_SESSION['first_name'] = $profile['first_name'] ?? 'User';
 
                 // Role-based redirect
-                if ($login['usertype_id'] == 1) { // admin
-                    header("Location: admin-dashboard.php");
-                } elseif ($login['usertype_id'] == 2) { // moderator
-                    header("Location: my-files.php");
-                } else {
-                    header("Location: my-files.php"); // user
+                if ($login['usertype_id'] == 1) {
+                    header("Location:index.php?nav=admin-dashboard");
+                } 
+                elseif ($login['usertype_id'] == 2) {
+                    header("Location:index.php?nav=my-files");
+                } 
+                else {
+                    header("Location:index.php?nav=my-files");
                 }            
                 exit();
             } else {
@@ -36,7 +38,8 @@
         } else {
             $_SESSION['login_error'] = "Email not found.";
         } 
-        header("Location: index.php");
+        header("Location:index.php?nav=home");
         exit();
     }
+
 ?>
