@@ -20,6 +20,11 @@
             <form method="POST" action="config.php">
               <input type="hidden" name="login" value="1">
               <div class="mb-3">
+              <?php if (isset($_SESSION['login_error'])): ?>
+                <div class="alert alert-danger text-center py-1">
+                  <?= $_SESSION['login_error']; ?>
+                </div>
+              <?php endif; ?>
                 <input type="email" name="email" class="form-control" placeholder="Email Address" required>
               </div>
               <div class="mb-4">
@@ -27,7 +32,6 @@
               </div>
               <button type="submit" class="btn w-100 login-submit-btn">Login</button>
             </form>
-
             <p class="mt-3 text-center small">Don't have an account yet? <a href="#" class="text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#sign-up-pop-up" data-bs-dismiss="modal">Sign up here</a></p>
           </div>
         </div>
