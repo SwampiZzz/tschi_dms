@@ -10,7 +10,7 @@
             <p class="small">Access your institutional documents securely.</p>
           </div>
         </div>
-        
+
         <!-- Right Form Panel -->
         <div class="col-md-6 bg-light p-4 d-flex align-items-center">
           <div class="w-100">
@@ -32,7 +32,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </div>

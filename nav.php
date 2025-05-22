@@ -1,19 +1,89 @@
 <?php
     error_reporting(1);
     session_start();
-    function nav(){
-        ?>
-        <nav class="navbar shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="?nav=home">
-                    <img src="elems/logo.png" alt="TSCHI" width="40" height="40">
-                </a>
-                <div>
-                    <button class="btn login-btn btn-outline-light me-2" type="button" data-bs-toggle="modal" data-bs-target="#login-pop-up">Login</button>
-                    <button class="btn sign-up-btn me-2" type="button" data-bs-toggle="modal" data-bs-target="#sign-up-pop-up">Sign-Up</button>
-                </div>
+    function nav() {
+?>
+    <!-- Main Navbar -->
+    <nav class="navbar shadow-sm" style="background-color: #1F0318;">
+        <div class="container d-flex justify-content-between align-items-center">
+            <a class="navbar-brand text-white" href="?nav=home">
+                <img src="elems/logo.png" alt="TSCHI" width="40" height="40">
+                <span class="ms-2 fw-bold">TSCHI - DMS</span>
+            </a>
+
+            <div>
+                <?php 
+                    if (!isset($_SESSION['user_id'])): 
+                ?>
+                        <button class="btn login-btn btn-outline-light fw-bold me-2" type="button" data-bs-toggle="modal" data-bs-target="#login-pop-up">Login</button>
+                        <button class="btn sign-up-btn fw-bold me-2" type="button" data-bs-toggle="modal" data-bs-target="#sign-up-pop-up">Sign-Up</button>
+                <?php 
+                    else: 
+                ?>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-light dropdown-toggle fw-bold d-flex align-items-center" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                            <?php
+                                include('config.php');
+                                $login_id = $_SESSION['user_id'];
+
+                                $profile_sql = mysqli_query($conn, "SELECT * FROM profile WHERE login_id = $login_id");
+                                $profile_data = mysqli_fetch_assoc($profile_sql);
+
+                                $first_name = $profile_data['first_name'] ?? 'User';
+                                $profile_pic_path = "images/{$login_id}.png";
+
+                                if (!file_exists($profile_pic_path)) {
+                                    $profile_pic_path = "images/default.png";
+                                }
+                            ?>
+                            <img src="<?= $profile_pic_path ?>" alt="Profile" class="rounded-circle me-2" width="32" height="32">
+                            <?= 
+                                $first_name 
+                            ?>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="?nav=profile">Profile Settings</a></li>
+                                <li><a class="dropdown-item text-danger" href="logout.php">Logout</a></li>
+                            </ul>
+                        </div>
+                <?php 
+                    endif; 
+                ?>
             </div>
-        </nav>
-        <?php
+        </div>
+    </nav>
+
+    <!-- Role-Based Sub Navbar -->
+    <?php 
+        if (isset($_SESSION['role'])): 
+    ?>
+    <nav class="navbar navbar-expand-sm" style="background-color: #2E0F26; height: 45px;">
+        <div class="container">
+            <ul class="navbar-nav small fw-bold">
+                <?php 
+                    if ($_SESSION['role'] === 'admin'): 
+                ?>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=admin-dashboard">Dashboard</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=manage-users">Manage Users</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=all-files">All Files</a></li>
+                <?php 
+                    elseif ($_SESSION['role'] === 'moderator'): 
+                ?>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=my-files">My Files</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=review-uploads">Review Uploads</a></li>
+                <?php 
+                    elseif ($_SESSION['role'] === 'user'): 
+                ?>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=my-files">My Files</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=upload">Upload New File</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=file-status">File Status</a></li>
+                <?php 
+                    endif; 
+                ?>
+            </ul>
+        </div>
+    </nav>
+    <?php 
+        endif;
     }
 ?>
