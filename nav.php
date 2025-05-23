@@ -6,7 +6,13 @@
     <!-- Main Navbar -->
     <nav class="navbar shadow-sm" style="background-color: #1F0318;">
         <div class="container d-flex justify-content-between align-items-center">
-            <a class="navbar-brand text-white" href="?nav">
+            <?php if ($_SESSION['role'] == 1) { ?>
+                <a class="navbar-brand text-white" href="index.php?nav=admin-dashboard">
+            <?php } elseif ($_SESSION['role'] == 2 || $_SESSION['role'] == 3) { ?>
+                <a class="navbar-brand text-white" href="index.php?nav=my-files">
+            <?php }  else { ?>
+                <a class="navbar-brand text-white" href="index.php?nav=home">
+            <?php } ?>            
                 <img src="elems/logo.png" alt="TSCHI" width="40" height="40">
                 <span class="ms-2 fw-bold">TSCHI - DMS</span>
             </a>

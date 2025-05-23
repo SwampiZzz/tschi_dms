@@ -19,12 +19,12 @@
 
             <form method="POST" action="config.php">
               <input type="hidden" name="login" value="1">
-              <div class="mb-3">
               <?php if (isset($_SESSION['login_error'])): ?>
                 <div class="alert alert-danger text-center py-1">
                   <?= $_SESSION['login_error']; ?>
                 </div>
               <?php endif; ?>
+              <div class="mb-3">
                 <input type="email" name="email" class="form-control" placeholder="Email Address" required>
               </div>
               <div class="mb-4">

@@ -31,7 +31,7 @@
           include('manage-users.php');
           break;
         case 'manage-categories':
-          include('manage-users.php');
+          include('manage-categories.php');
           break;
         case 'all-files':
           include('all-files.php');

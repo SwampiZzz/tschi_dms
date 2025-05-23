@@ -21,3 +21,13 @@
     </script>
 <?php unset($_SESSION['login_error']); ?>
 <?php endif; ?>
+<?php if (isset($_SESSION['register_error']) || isset($_SESSION['register_success'])): ?>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const signUpModal = new bootstrap.Modal(document.getElementById('sign-up-pop-up'));
+        signUpModal.show();
+    });
+    </script>
+<?php unset($_SESSION['register_error']); 
+unset($_SESSION['register_success']);?>
+<?php endif; ?>

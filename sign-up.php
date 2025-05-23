@@ -19,15 +19,24 @@
 
                         <form method="POST" action="config.php">
                             <input type="hidden" name="register" value="1">
+                            <?php if (isset($_SESSION['register_error'])): ?>
+                                <div class="alert alert-danger text-center small py-1 mb-2">
+                                    <?= $_SESSION['register_error']; ?>
+                                </div>
+                            <?php endif;
+                            if (isset($_SESSION['register_success'])): ?>
+                                <div class="alert alert-success text-center small py-1 mb-2">
+                                    <?= $_SESSION['register_success']; ?>
+                                </div>
+                            <?php endif; ?>
                             <div class="mb-2"><input type="text" name="first_name" class="form-control" placeholder="First Name" required></div>
-                            <div class="mb-2"><input type="text" name="middle_name" class="form-control" placeholder="Middle Name"></div>
+                            <div class="mb-2"><input type="text" name="middle_name" class="form-control" placeholder="Middle Name (Optional)"></div>
                             <div class="mb-2"><input type="text" name="last_name" class="form-control" placeholder="Last Name" required></div>
                             <div class="mb-2"><input type="email" name="email" class="form-control" placeholder="Email Address" required></div>
                             <div class="mb-2"><input type="password" name="password" class="form-control" placeholder="Password" required></div>
                             <div class="mb-4"><input type="password" name="confirm_password" class="form-control" placeholder="Confirm Password" required></div>
                             <button type="submit" class="btn w-100 login-submit-btn">Sign up</button>
                         </form>
-
                         <p class="mt-3 text-center small">Already have an account? 
                             <a href="#" class="text-decoration-none text-primary" data-bs-toggle="modal" data-bs-target="#login-pop-up" data-bs-dismiss="modal">Login</a>
                         </p>
