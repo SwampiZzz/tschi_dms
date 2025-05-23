@@ -13,10 +13,6 @@
       <input class="form-control mb-2" id="first-name" type="text" value="<?= $firstname ?>" placeholder="First Name">
       <input class="form-control mb-2" id="middle-name" type="text" value="<?= $middlename ?>" placeholder="Middle Name">
       <input class="form-control mb-2" id="last-name" type="text" value="<?= $lastname ?>" placeholder="Last Name">
-      <select class="form-select mb-2" id="dropdown-department">
-        <option value="">--Department--</option>
-        <?= $deptopts ?>
-      </select>
       <input id="save-profile-button" class="btn btn-primary w-100" type="submit" value="Update Profile" onclick="return updateProfileBtn()">
     </div>
   </div>

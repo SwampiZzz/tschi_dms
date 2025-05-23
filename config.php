@@ -166,9 +166,9 @@
             exit();
         }
         // Insert file into database
-        $stmt = $conn->prepare("INSERT INTO file (name, description, upload_date, category_id, status_id, login_id) VALUES (?, ?, NOW(), ?, ?, ?)");
+        $stmt = $conn->prepare("INSERT INTO file (name, stored_name, description, upload_date, category_id, status_id, login_id) VALUES (?, ?, ?, NOW(), ?, ?, ?)");
         $status_id = 1; // default status
-        $stmt->bind_param("ssiii", $name, $description, $category_id, $status_id, $user_id);
+        $stmt->bind_param("sssiii", $name, $filename, $description, $category_id, $status_id, $user_id);
 
         if ($stmt->execute()) {
             $_SESSION['upload_success'] = "File uploaded successfully!";
@@ -178,4 +178,33 @@
         header("Location: index.php?nav=file-status");
         exit();
     }
+
+    if (isset($_POST['delete_file_id'])) {
+        $file_id = $_POST['delete_file_id'];
+        $user_id = $_SESSION['user_id'];
+    
+        // Get the actual file name first
+        $query = $conn->prepare("SELECT name FROM file WHERE id = ? AND login_id = ?");
+        $query->bind_param("ii", $file_id, $user_id);
+        $query->execute();
+        $result = $query->get_result();
+    
+        if ($file = $result->fetch_assoc()) {
+            $file_path = "uploads/" . $file['name'];
+            if (file_exists($file_path)) {
+                unlink($file_path); // Delete the physical file
+            }
+    
+            // Now delete from the database
+            $conn->query("DELETE FROM file WHERE id = $file_id AND login_id = $user_id");
+            $_SESSION['delete_temp_success'] = "File deleted successfully.";
+        } else {
+            $_SESSION['delete_temp_success'] = "File not found or permission denied.";
+        }
+    
+        header("Location: index.php?nav=file-status");
+        exit();
+    }
+    
+    
 ?>
