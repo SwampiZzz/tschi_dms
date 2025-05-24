@@ -37,8 +37,8 @@
         case 'all-files':
           include('all-files.php');
           break;
-        case 'my-files':
-          include("my-files.php");
+        case 'my-dashboard':
+          include("my-dashboard.php");
           break;
         case 'upload':
           include("upload.php");

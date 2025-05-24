@@ -9,7 +9,7 @@
             <?php if ($_SESSION['role'] == 1) { ?>
                 <a class="navbar-brand text-white" href="index.php?nav=admin-dashboard">
             <?php } elseif ($_SESSION['role'] == 2 || $_SESSION['role'] == 3) { ?>
-                <a class="navbar-brand text-white" href="index.php?nav=my-files">
+                <a class="navbar-brand text-white" href="index.php?nav=my-dashboard">
             <?php }  else { ?>
                 <a class="navbar-brand text-white" href="index.php?nav=home">
             <?php } ?>            
@@ -75,16 +75,16 @@
                 <?php 
                     } elseif ($_SESSION['role'] == 2) {
                 ?>
-                        <li class="nav-item"><a class="nav-link text-white" href="?nav=my-files">My Files</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=my-dashboard">My Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=upload">Upload New File</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="?nav=file-status">File Status</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=file-status">My Files</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=review-uploads">Review Uploads</a></li>
                 <?php 
                     } else{
                 ?>
-                        <li class="nav-item"><a class="nav-link text-white" href="?nav=my-files">My Files</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=my-dashboard">My Dashboard</a></li>
                         <li class="nav-item"><a class="nav-link text-white" href="?nav=upload">Upload New File</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="?nav=file-status">File Status</a></li>
+                        <li class="nav-item"><a class="nav-link text-white" href="?nav=file-status">My Files</a></li>
                 <?php 
                     } endif; 
                 ?>

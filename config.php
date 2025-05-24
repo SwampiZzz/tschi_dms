@@ -184,15 +184,15 @@
         $user_id = $_SESSION['user_id'];
     
         // Get the actual file name first
-        $query = $conn->prepare("SELECT name FROM file WHERE id = ? AND login_id = ?");
+        $query = $conn->prepare("SELECT stored_name FROM file WHERE id = ? AND login_id = ?");
         $query->bind_param("ii", $file_id, $user_id);
         $query->execute();
         $result = $query->get_result();
     
         if ($file = $result->fetch_assoc()) {
-            $file_path = "uploads/" . $file['name'];
+            $file_path = "uploads/" . $file['stored_name'];
             if (file_exists($file_path)) {
-                unlink($file_path); // Delete the physical file
+                unlink($file_path);
             }
     
             // Now delete from the database
@@ -206,4 +206,41 @@
         exit();
     }
     
+    // REVIEW FILES =============
+    if (isset($_POST['review_file_id']) && isset($_POST['approve_file'])) {
+        $file_id = $_POST['review_file_id'];
+        $stmt = $conn->prepare("UPDATE file SET status_id = 2 WHERE id = ?");
+        $stmt->bind_param("i", $file_id);
+        $stmt->execute();
+        $_SESSION['review_success'] = "File approved successfully.";
+        header("Location: index.php?nav=review-uploads");
+        exit();
+    }
+
+    if (isset($_POST['review_file_id']) && isset($_POST['reject_file']) && isset($_POST['rejection_remark'])) {
+        $file_id = $_POST['review_file_id'];
+        $remark = trim($_POST['rejection_remark']);
+        $stmt = $conn->prepare("UPDATE file SET status_id = 3, description = CONCAT(description, ' | Rejection: ', ?) WHERE id = ?");
+        $stmt->bind_param("si", $remark, $file_id);
+        $stmt->execute();
+        $_SESSION['review_success'] = "File rejected with remarks.";
+        header("Location: index.php?nav=review-uploads");
+        exit();
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_file'])) {
+        $file_id = intval($_POST['file_id']);
+        $new_name = trim($_POST['new_name']);
+        $new_desc = trim($_POST['new_description']);
+        $new_cat = intval($_POST['new_category_id']);
+        $user_id = $_SESSION['user_id'];
+    
+        $stmt = $conn->prepare("UPDATE file SET name = ?, description = ?, category_id = ?, status_id = 1 WHERE id = ? AND login_id = ?");
+        $stmt->bind_param("ssiii", $new_name, $new_desc, $new_cat, $file_id, $user_id);
+        $stmt->execute();
+    
+        $_SESSION['delete_temp_success'] = "File updated successfully. Status reset to pending.";
+        header("Location: index.php?nav=file-status");
+        exit();
+    }    
 ?>
