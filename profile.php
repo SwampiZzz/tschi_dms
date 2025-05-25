@@ -1,4 +1,8 @@
 <?php
+if (!isset($_SESSION['user_id'])) {
+  header("Location: index.php?nav=home");
+  exit();
+}
 include('config.php');
 $login_id = $_SESSION['user_id']; // Make sure this is set
 $query = mysqli_query($conn, "SELECT * FROM profile WHERE login_id = $login_id");

@@ -1,7 +1,13 @@
 <?php
 session_start();
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
-    header("Location: index.php?nav=home");
+    if($_SESSION['role'] == 3){
+        header("location: index.php?nav=my-dashboard");
+    } elseif($_SESSION['role'] == 2){
+        header("location: index.php?nav=my-dashboard");
+    } else{
+        header("Location: index.php?nav=home");
+    }
     exit();
 }
 

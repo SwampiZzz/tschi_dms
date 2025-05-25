@@ -1,8 +1,14 @@
 <?php
     session_start();
     include('config.php');
-    if ($_SESSION['role'] != 1) {
-        header("Location: index.php?nav=home");
+    if (!isset($_SESSION['user_id']) || $_SESSION['role'] != 1) {
+        if($_SESSION['role'] == 3){
+            header("location: index.php?nav=my-dashboard");
+        } elseif($_SESSION['role'] == 2){
+            header("location: index.php?nav=my-dashboard");
+        } else{
+            header("Location: index.php?nav=home");
+        }
         exit();
     }
 
