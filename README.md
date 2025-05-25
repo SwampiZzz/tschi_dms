@@ -45,32 +45,23 @@ A web-based platform for securely uploading, reviewing, managing, and retrieving
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/your-repo/tschi-dms.git
-Import the database (SQL file not included here):
-
-Create a database (e.g., tschi_dms)
-
-Import the provided tschi_dms.sql
-
-Configure database settings in config.php:
-
-php
-Copy
-Edit
-$conn = new mysqli("localhost", "root", "", "tschi_dms");
-Ensure folders are writable:
-
-uploads/
-
-elems/profile-picture/
-
-Run locally:
-Open http://localhost/tschi_dms in your browser.
+2. Import the database (SQL file not included here):
+3. Create a database (e.g., tschi_dms)
+4. Import the provided tschi_dms.sql
+5. Configure database settings in config.php:
+6. Edit $conn = new mysqli("localhost", "root", "", "tschi_dms");
+7. Ensure folders are writable:
+   - uploads/
+   - elems/profile-picture/
+8. Run locally:
+9. Open http://localhost/tschi_dms in your browser.
 ----------------------
-👤 Developers
+## 👤 Developers
+
 This system is developed by:
-Cesar Janell Medina – Lead Developer
-Edmund Sealtiel De Veyra – Backend & Security
-Sheila Mae Comandao – UI/UX & Database Design
+- Cesar Janell Medina – Lead Developer
+- Edmund Sealtiel De Veyra – Backend & Security
+- Sheila Mae Comandao – UI/UX & Database Design
 ----------------------
 📄 License
 This project is developed for educational purposes at TSCHI and is not open-source for redistribution without permission.
