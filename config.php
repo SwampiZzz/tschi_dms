@@ -23,9 +23,9 @@
                 if ($login['usertype_id'] == 1) {
                     header("Location:index.php?nav=admin-dashboard");
                 } elseif ($login['usertype_id'] == 2) {
-                    header("Location:index.php?nav=my-files");
+                    header("Location:index.php?nav=my-dashboard");
                 } else {
-                    header("Location:index.php?nav=my-files");
+                    header("Location:index.php?nav=my-dashboard");
                 } exit();
             } else {
                 $_SESSION['login_error'] = "Incorrect password.";
@@ -220,13 +220,32 @@
     if (isset($_POST['review_file_id']) && isset($_POST['reject_file']) && isset($_POST['rejection_remark'])) {
         $file_id = $_POST['review_file_id'];
         $remark = trim($_POST['rejection_remark']);
-        $stmt = $conn->prepare("UPDATE file SET status_id = 3, description = CONCAT(description, ' | Rejection: ', ?) WHERE id = ?");
+    
+        $stmt = $conn->prepare("UPDATE file SET status_id = 3, remarks = ? WHERE id = ?");
         $stmt->bind_param("si", $remark, $file_id);
         $stmt->execute();
+    
         $_SESSION['review_success'] = "File rejected with remarks.";
         header("Location: index.php?nav=review-uploads");
         exit();
     }
+    
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['clear_remarks_file_id'])) {
+        $file_id = intval($_POST['clear_remarks_file_id']);
+    
+        // Ensure only admin or moderator can do this
+        if (in_array($_SESSION['role'], [1, 2])) {
+            $stmt = $conn->prepare("UPDATE file SET remarks = NULL, status_id = 1 WHERE id = ?");
+            $stmt->bind_param("i", $file_id);
+            $stmt->execute();
+    
+            header("Location: index.php?nav=review-uploads");
+            exit();
+        } else {
+            header("Location: index.php?nav=review-uploads");
+            exit();
+        }
+    }    
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['edit_file'])) {
         $file_id = intval($_POST['file_id']);
@@ -235,12 +254,63 @@
         $new_cat = intval($_POST['new_category_id']);
         $user_id = $_SESSION['user_id'];
     
-        $stmt = $conn->prepare("UPDATE file SET name = ?, description = ?, category_id = ?, status_id = 1 WHERE id = ? AND login_id = ?");
-        $stmt->bind_param("ssiii", $new_name, $new_desc, $new_cat, $file_id, $user_id);
+        // Fetch current file data
+        $current = $conn->prepare("SELECT name, description, category_id FROM file WHERE id = ? AND login_id = ?");
+        $current->bind_param("ii", $file_id, $user_id);
+        $current->execute();
+        $result = $current->get_result();
+    
+        if ($row = $result->fetch_assoc()) {
+            // Check if there are changes
+            if (
+                $row['name'] === $new_name &&
+                $row['description'] === $new_desc &&
+                (int)$row['category_id'] === $new_cat
+            ) {
+                $_SESSION['delete_temp_success'] = "No changes detected. File not updated.";
+                header("Location: index.php?nav=file-status");
+                exit();
+            }
+    
+            // Proceed with update
+            $stmt = $conn->prepare("UPDATE file SET name = ?, description = ?, category_id = ?, status_id = 1 WHERE id = ? AND login_id = ?");
+            $stmt->bind_param("ssiii", $new_name, $new_desc, $new_cat, $file_id, $user_id);
+            $stmt->execute();
+    
+            $_SESSION['delete_temp_success'] = "File updated successfully. Status reset to pending.";
+        } else {
+            $_SESSION['delete_temp_success'] = "File not found or permission denied.";
+        }
+    
+        header("Location: index.php?nav=file-status");
+        exit();
+    }
+       
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
+        $first_name = trim($_POST['first_name']);
+        $middle_name = trim($_POST['middle_name']);
+        $last_name = trim($_POST['last_name']);
+        $user_id = $_SESSION['user_id'];
+    
+        // Update name fields
+        $stmt = $conn->prepare("UPDATE profile SET first_name = ?, middle_name = ?, last_name = ? WHERE login_id = ?");
+        $stmt->bind_param("sssi", $first_name, $middle_name, $last_name, $user_id);
         $stmt->execute();
     
-        $_SESSION['delete_temp_success'] = "File updated successfully. Status reset to pending.";
-        header("Location: index.php?nav=file-status");
+        // Handle profile picture upload
+        if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
+            $target_dir = "elems/profile-picture/";
+            if (!is_dir($target_dir)) mkdir($target_dir, 0755, true);
+    
+            $ext = pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION);
+            $filename = $user_id . '.png'; // Standardize filename (overwrite allowed)
+            $upload_path = $target_dir . $filename;
+    
+            move_uploaded_file($_FILES['profile_picture']['tmp_name'], $upload_path);
+        }
+    
+        echo "OK";
         exit();
     }    
 ?>

@@ -54,7 +54,7 @@ $result = mysqli_query($conn, $query);
             <input type="hidden" name="nav" value="review-uploads">
             <div class="input-group">
                 <input type="text" name="search" class="form-control" placeholder="Search by file name or uploader" value="<?= htmlspecialchars($search) ?>">
-                <button class="btn btn-primary" type="submit">Search</button>
+                <button class="btn btn-success" type="submit">Search</button>
             </div>
         </form>
     </div>
@@ -80,7 +80,7 @@ $result = mysqli_query($conn, $query);
                 <option value="3" <?= $filter == '3' ? 'selected' : '' ?>>Rejected</option>
             </select>
 
-            <button class="btn btn-outline-secondary btn-sm">Apply</button>
+            <button class="btn btn-outline-primary btn-sm">Apply</button>
         </form>
     </div>
 
@@ -114,19 +114,29 @@ $result = mysqli_query($conn, $query);
                             <td><?= date('M d, Y', strtotime($file['upload_date'])) ?></td>
                             <td>
                                 <a href="uploads/<?= $file['stored_name'] ?>" class="btn btn-sm btn-outline-primary" target="_blank">View</a>
+                                <button type="button" class="btn btn-sm btn-outline-secondary" onclick="loadViewFile(<?= $file['id'] ?>)">Info</button>
                                 <?php if ($file['status_id'] == 1): ?>
                                     <form method="POST" action="config.php" class="d-inline-block">
                                         <input type="hidden" name="review_file_id" value="<?= $file['id'] ?>">
                                         <button class="btn btn-sm btn-success" name="approve_file" value="1">Approve</button>
                                     </form>
+
                                     <button class="btn btn-sm btn-danger" onclick="showRejectForm(<?= $file['id'] ?>)">Reject</button>
+
                                     <form method="POST" action="config.php" class="d-none mt-2" id="reject-form-<?= $file['id'] ?>">
                                         <input type="hidden" name="review_file_id" value="<?= $file['id'] ?>">
                                         <textarea name="rejection_remark" class="form-control form-control-sm my-1" placeholder="Rejection remarks" required></textarea>
                                         <button class="btn btn-sm btn-danger" name="reject_file" value="1">Submit Rejection</button>
                                     </form>
-                                <?php elseif ($file['status_id'] == 3 && $file['remarks']): ?>
-                                    <div class="text-muted small mt-1">Reason: <?= htmlspecialchars($file['remarks']) ?></div>
+
+                                <?php elseif ($file['status_id'] == 3 || $file['status_id'] == 2 ): ?>
+                                    <form method="POST" action="config.php" class="d-inline">
+                                        <input type="hidden" name="clear_remarks_file_id" value="<?= $file['id'] ?>">
+                                        <button class="btn btn-sm btn-warning" onclick="return confirm('Undo remarks for this file?')">Undo Remarks</button>
+                                    </form>
+                                    <?php if ($file['remarks']):?>
+                                        <div class="text-muted small mt-1">Reason: <?= htmlspecialchars($file['remarks']) ?></div>
+                                    <?php endif; ?>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -138,7 +148,6 @@ $result = mysqli_query($conn, $query);
         <p class="text-muted">No files found.</p>
     <?php endif; ?>
 </div>
-
 <script>
 function showRejectForm(id) {
     const form = document.getElementById('reject-form-' + id);
@@ -147,5 +156,22 @@ function showRejectForm(id) {
     } else {
         form.classList.add('d-none');
     }
+}
+</script>
+<!-- Modal placeholder -->
+<div class="modal fade" id="viewModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+function loadViewFile(id) {
+  fetch('view-file.php?id=' + id)
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById('modalContent').innerHTML = html;
+      new bootstrap.Modal(document.getElementById('viewModal')).show();
+    });
 }
 </script>

@@ -35,7 +35,7 @@ $result = mysqli_query($conn, "
 
 ?>
 <form method="GET" action="index.php" class="mb-3">
-    <input type="hidden" name="nav" value="file-status">
+    <input type="hidden" name="nav" value="<?= htmlspecialchars($_GET['nav'] ?? 'file-status') ?>">
 
     <div class="row g-2 mb-2">
         <div class="col-md-10">

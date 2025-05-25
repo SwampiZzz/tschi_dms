@@ -72,4 +72,45 @@ body {
     background-color: transparent;
     border: 1px solid #E3F09B;
     color: #1F0318;
-}       
+}    
+
+.profile-pic-hover {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-pic-hover img {
+    transition: 0.3s;
+}
+
+.profile-pic-hover:hover img {
+    filter: brightness(70%);
+}
+
+.profile-pic-hover span {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: white;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+}
+
+.profile-pic-hover:hover span {
+    display: block;
+}
+
+.file-card-body {
+    transition: background-color 0.2s ease;
+}
+  
+.file-card-body:hover {
+    background-color: #eaeaea; /* Light gray background on hover */
+}
+ 
+.alert .btn-close {
+    margin-top: -8px; /* adjust vertically */
+    transform: scale(0.8); /* optional: shrink for better fit */
+}
