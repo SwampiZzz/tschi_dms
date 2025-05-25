@@ -1,13 +1,15 @@
 <?php
     error_reporting(1);
     session_start();
+
     function nav() {
+    $current_nav = $_GET['nav'] ?? 'home';
 ?>
 <!-- Main Navbar -->
 <nav class="navbar shadow-sm" style="background-color: #1F0318;">
     <div class="container d-flex justify-content-between align-items-center">
         <?php if ($_SESSION['role'] == 1) { ?>
-            <a class="navbar-brand text-white" href="index.php?nav=admin-dashboard">
+            <a class="navbar-brand text-white " href="index.php?nav=admin-dashboard">
         <?php } elseif ($_SESSION['role'] == 2 || $_SESSION['role'] == 3) { ?>
             <a class="navbar-brand text-white" href="index.php?nav=my-dashboard">
         <?php }  else { ?>
@@ -67,23 +69,24 @@
             <?php 
                 if ($_SESSION['role'] == 1) { 
             ?>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=admin-dashboard">Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=manage-users">Manage Users</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=manage-categories">Manage Categories</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=all-files">All Files</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'admin-dashboard' ? 'active fw-bold text-warning' : '' ?>" href="?nav=admin-dashboard">Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'all-files' ? 'active fw-bold text-warning' : '' ?>" href="?nav=all-files">All Files</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'manage-users' ? 'active fw-bold text-warning' : '' ?>" href="?nav=manage-users">Manage Users</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'review-uploads' ? 'active fw-bold text-warning' : '' ?>" href="?nav=review-uploads">Review Uploads</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'manage-categories' ? 'active fw-bold text-warning' : '' ?>" href="?nav=manage-categories">Manage Categories</a></li>
             <?php 
                 } elseif ($_SESSION['role'] == 2) {
             ?>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=my-dashboard">My Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=upload">Upload New File</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=file-status">My Files</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=review-uploads">Review Uploads</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'my-dashboard' ? 'active fw-bold text-warning' : '' ?>" href="?nav=my-dashboard">My Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'upload' ? 'active fw-bold text-warning' : '' ?>" href="?nav=upload">Upload New File</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'file-status' ? 'active fw-bold text-warning' : '' ?>" href="?nav=file-status">My Files</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'review-uploads' ? 'active fw-bold text-warning' : '' ?>" href="?nav=review-uploads">Review Uploads</a></li>
             <?php 
                 } else{
             ?>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=my-dashboard">My Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=upload">Upload New File</a></li>
-                    <li class="nav-item"><a class="nav-link text-white" href="?nav=file-status">My Files</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'my-dashboard' ? 'active fw-bold text-warning' : '' ?>" href="?nav=my-dashboard">My Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'upload' ? 'active fw-bold text-warning' : '' ?>" href="?nav=upload">Upload New File</a></li>
+                    <li class="nav-item"><a class="nav-link text-white <?= $current_nav === 'file-status' ? 'active fw-bold text-warning' : '' ?>" href="?nav=file-status">My Files</a></li>
             <?php 
                 } endif; 
             ?>

@@ -1,11 +1,18 @@
 body {
     font-family: 'Lato', sans-serif;
+    background-color: #f2f4f8;
+    background-repeat: repeat;
+    background-size: contain;
+}
+
+body.guest {
+    background: linear-gradient(to right, #e0eafc, #cfdef3);
 }
 
 .hero-section {
     position: relative;
     background: url('elems/TSCHI\ Bldg.jpg') center/cover no-repeat;
-    height: 60vh;
+    height: 95vh;
     color: white;
     z-index: 1;
 }  
@@ -21,8 +28,19 @@ body {
     z-index: 1;
 }
 
+.features-section h2,
+.dev-section h2 {
+    font-size: 2rem;
+}
+
+.features-section .bi,
+.dev-section .bi {
+    font-size: 3rem;
+}
+
+
 .sign-up-btn {
-    background-color: #E3F09B;
+    background-color: #e3f09b;
     border: 2px solid transparent;
 }
 .sign-up-btn:hover {
@@ -34,6 +52,16 @@ body {
 .navbar {
     background-color: #1F0318;
     text-align: left;
+}
+
+.navbar-nav .nav-link:hover {
+    color: #e3f09b !important;
+    font-weight: bold;
+}
+
+.navbar-nav .nav-link.active {
+    color: #e3f09b !important;
+    font-weight: bold;
 }
 
 .login-modal {
@@ -111,6 +139,6 @@ body {
 }
  
 .alert .btn-close {
-    margin-top: -8px; /* adjust vertically */
+    margin-top: -10px; /* adjust vertically */
     transform: scale(0.8); /* optional: shrink for better fit */
 }

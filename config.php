@@ -180,12 +180,20 @@
     }
 
     if (isset($_POST['delete_file_id'])) {
-        $file_id = $_POST['delete_file_id'];
+        $file_id = intval($_POST['delete_file_id']);
         $user_id = $_SESSION['user_id'];
+        $is_admin = $_SESSION['role'] == 1;
     
-        // Get the actual file name first
-        $query = $conn->prepare("SELECT stored_name FROM file WHERE id = ? AND login_id = ?");
-        $query->bind_param("ii", $file_id, $user_id);
+        if ($is_admin) {
+            // Admin: No need to match login_id
+            $query = $conn->prepare("SELECT stored_name FROM file WHERE id = ?");
+            $query->bind_param("i", $file_id);
+        } else {
+            // Regular user: Must own the file
+            $query = $conn->prepare("SELECT stored_name FROM file WHERE id = ? AND login_id = ?");
+            $query->bind_param("ii", $file_id, $user_id);
+        }
+    
         $query->execute();
         $result = $query->get_result();
     
@@ -195,16 +203,24 @@
                 unlink($file_path);
             }
     
-            // Now delete from the database
-            $conn->query("DELETE FROM file WHERE id = $file_id AND login_id = $user_id");
+            // Delete from DB
+            if ($is_admin) {
+                $conn->query("DELETE FROM file WHERE id = $file_id");
+            } else {
+                $conn->query("DELETE FROM file WHERE id = $file_id AND login_id = $user_id");
+            }
+    
             $_SESSION['delete_temp_success'] = "File deleted successfully.";
         } else {
             $_SESSION['delete_temp_success'] = "File not found or permission denied.";
         }
     
-        header("Location: index.php?nav=file-status");
+        // Redirect
+        $redirect = $is_admin ? "all-files" : "file-status";
+        header("Location: index.php?nav=$redirect");
         exit();
     }
+    
     
     // REVIEW FILES =============
     if (isset($_POST['review_file_id']) && isset($_POST['approve_file'])) {
@@ -238,7 +254,6 @@
             $stmt = $conn->prepare("UPDATE file SET remarks = NULL, status_id = 1 WHERE id = ?");
             $stmt->bind_param("i", $file_id);
             $stmt->execute();
-    
             header("Location: index.php?nav=review-uploads");
             exit();
         } else {
@@ -253,12 +268,21 @@
         $new_desc = trim($_POST['new_description']);
         $new_cat = intval($_POST['new_category_id']);
         $user_id = $_SESSION['user_id'];
+        $user_role = $_SESSION['role'];
     
         // Fetch current file data
-        $current = $conn->prepare("SELECT name, description, category_id FROM file WHERE id = ? AND login_id = ?");
-        $current->bind_param("ii", $file_id, $user_id);
-        $current->execute();
-        $result = $current->get_result();
+        $query = $user_role == 1 
+            ? $conn->prepare("SELECT name, description, category_id FROM file WHERE id = ?") 
+            : $conn->prepare("SELECT name, description, category_id FROM file WHERE id = ? AND login_id = ?");
+        
+        if ($user_role == 1) {
+            $query->bind_param("i", $file_id);
+        } else {
+            $query->bind_param("ii", $file_id, $user_id);
+        }
+    
+        $query->execute();
+        $result = $query->get_result();
     
         if ($row = $result->fetch_assoc()) {
             // Check if there are changes
@@ -268,23 +292,30 @@
                 (int)$row['category_id'] === $new_cat
             ) {
                 $_SESSION['delete_temp_success'] = "No changes detected. File not updated.";
-                header("Location: index.php?nav=file-status");
-                exit();
+            } else {
+                // Proceed with update
+                $stmt = $user_role == 1
+                    ? $conn->prepare("UPDATE file SET name = ?, description = ?, category_id = ?, status_id = 1 WHERE id = ?")
+                    : $conn->prepare("UPDATE file SET name = ?, description = ?, category_id = ?, status_id = 1 WHERE id = ? AND login_id = ?");
+                
+                if ($user_role == 1) {
+                    $stmt->bind_param("ssii", $new_name, $new_desc, $new_cat, $file_id);
+                } else {
+                    $stmt->bind_param("ssiii", $new_name, $new_desc, $new_cat, $file_id, $user_id);
+                }
+    
+                $stmt->execute();
+                $_SESSION['delete_temp_success'] = "File updated successfully. Status reset to pending.";
             }
-    
-            // Proceed with update
-            $stmt = $conn->prepare("UPDATE file SET name = ?, description = ?, category_id = ?, status_id = 1 WHERE id = ? AND login_id = ?");
-            $stmt->bind_param("ssiii", $new_name, $new_desc, $new_cat, $file_id, $user_id);
-            $stmt->execute();
-    
-            $_SESSION['delete_temp_success'] = "File updated successfully. Status reset to pending.";
         } else {
             $_SESSION['delete_temp_success'] = "File not found or permission denied.";
         }
     
-        header("Location: index.php?nav=file-status");
+        // Redirect based on role
+        $redirect_page = $user_role == 1 ? "all-files" : "file-status";
+        header("Location: index.php?nav=$redirect_page");
         exit();
-    }
+    }    
        
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_profile'])) {
@@ -312,5 +343,37 @@
     
         echo "OK";
         exit();
-    }    
+    }
+    
+    // Update user role
+    if (isset($_POST['update_role_id'], $_POST['new_role'])) {
+        $id = intval($_POST['update_role_id']);
+        $role = intval($_POST['new_role']);
+        $stmt = $conn->prepare("UPDATE login SET usertype_id = ? WHERE id = ?");
+        $stmt->bind_param("ii", $role, $id);
+        $stmt->execute();
+
+        $_SESSION['delete_temp_success'] = "User role updated.";
+        header("Location: index.php?nav=manage-users");
+        exit();
+    }
+
+    // Delete user
+    if (isset($_POST['delete_user_id'])) {
+        $id = intval($_POST['delete_user_id']);
+        // Delete from profile first due to FK constraints
+        mysqli_query($conn, "DELETE FROM profile WHERE login_id = $id");
+        mysqli_query($conn, "DELETE FROM login WHERE id = $id");
+
+        $_SESSION['delete_temp_success'] = "User deleted successfully.";
+        header("Location: index.php?nav=manage-users");
+        exit();
+    }
+
+    if ($_FILES['pdf_file']['size'] > 5 * 1024 * 1024) { // 5MB in bytes
+        $_SESSION['upload_error'] = "File size exceeds the 5MB limit.";
+        header("Location: index.php?nav=upload");
+        exit();
+    }
+    
 ?>
