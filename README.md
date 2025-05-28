@@ -58,10 +58,10 @@ A web-based platform for securely uploading, reviewing, managing, and retrieving
 ----------------------
 ## 👤 Developers
 
-This system is developed by:
-- Cesar Janell Medina – Lead Developer
-- Edmund Sealtiel De Veyra – Backend & Security
-- Sheila Mae Comandao – UI/UX & Database Design
+This system is developed by 2nd year BSIT students in ACLC College of Tacloban:
+- Cesar Janell Medina
+- Edmund Sealtiel De Veyra
+- Sheila Mae Comandao
 ----------------------
 📄 License
-This project is developed for educational purposes at TSCHI and is not open-source for redistribution without permission.
+This project is developed for educational purposes and is not open-source for redistribution without permission.
